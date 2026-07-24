@@ -1,11 +1,77 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Icon } from "./icons";
 import { site } from "@/lib/site";
 
 type Msg = { role: "user" | "model"; text: string };
+
+/* ---------- عرض تنسيق بسيط بأمان ----------
+   النموذج قد يرد بماركداون (**عريض** أو قوائم بشرطة). نعرضها كعناصر React
+   حقيقية بدل طباعة الرموز كما هي. لا نستخدم dangerouslySetInnerHTML إطلاقًا،
+   فلا يمكن لأي نص قادم من النموذج أن يحقن HTML. */
+
+function Inline({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*\n]+\*\*)/g);
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.length > 4 && p.startsWith("**") && p.endsWith("**") ? (
+          <strong key={i} className="font-extrabold text-navy">
+            {p.slice(2, -2)}
+          </strong>
+        ) : (
+          <span key={i}>{p}</span>
+        ),
+      )}
+    </>
+  );
+}
+
+function RichText({ text }: { text: string }) {
+  const clean = text
+    .replace(/```[\s\S]*?```/g, "") // كتل الكود
+    .replace(/`([^`]+)`/g, "$1") // باك-تيك
+    .replace(/^#{1,6}\s*/gm, "") // عناوين ماركداون
+    .replace(/^\s*[-*_]{3,}\s*$/gm, ""); // خطوط فاصلة
+
+  const blocks: ReactNode[] = [];
+  let bullets: string[] = [];
+
+  const flush = () => {
+    if (!bullets.length) return;
+    blocks.push(
+      <ul key={`u${blocks.length}`} className="my-1.5 list-disc space-y-1 ps-5">
+        {bullets.map((b, i) => (
+          <li key={i}>
+            <Inline text={b} />
+          </li>
+        ))}
+      </ul>,
+    );
+    bullets = [];
+  };
+
+  for (const raw of clean.split("\n")) {
+    const line = raw.trimEnd();
+    const m = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (m) {
+      bullets.push(m[1]);
+      continue;
+    }
+    flush();
+    if (!line.trim()) continue;
+    blocks.push(
+      <p key={`p${blocks.length}`} className="my-0.5">
+        <Inline text={line} />
+      </p>,
+    );
+  }
+  flush();
+
+  return <>{blocks}</>;
+}
 
 const SUGGESTIONS = [
   "ما هي الباقات المتوفرة؟",
@@ -135,13 +201,13 @@ export default function ChatWidget() {
                   className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}
                 >
                   <div
-                    className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                    className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       m.role === "user"
-                        ? "bg-navy text-white"
+                        ? "whitespace-pre-wrap bg-navy text-white"
                         : "border border-line bg-white text-ink"
                     }`}
                   >
-                    {m.text}
+                    {m.role === "user" ? m.text : <RichText text={m.text} />}
                   </div>
                 </div>
               ))}

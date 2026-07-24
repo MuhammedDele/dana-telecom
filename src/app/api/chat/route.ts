@@ -4,7 +4,12 @@ import { buildSystemPrompt } from "@/lib/chatKnowledge";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MODEL = "gemini-2.5-flash";
+/**
+ * أرخص نموذج مناسب لمساعد أسئلة شائعة.
+ * ملاحظة: عائلة 2.0 لا تحتوي "تفكير" (thinking) فلا تُحتسب رموز إضافية —
+ * بعكس 2.5-flash التي كانت تستهلك ~287 رمز تفكير مقابل إجابة من 9 رموز.
+ */
+const MODEL = "gemini-2.0-flash-lite";
 const MAX_MESSAGE_CHARS = 600;
 const MAX_HISTORY = 8; // آخر 8 رسائل فقط (توفير تكلفة)
 
@@ -108,8 +113,7 @@ export async function POST(req: Request) {
           generationConfig: {
             temperature: 0.25,
             maxOutputTokens: 600,
-            // ميزانية تفكير صغيرة: تعطيلها تمامًا (0) أضعف الالتزام بالتعليمات
-            thinkingConfig: { thinkingBudget: 512 },
+            // لا thinkingConfig — نموذج 2.0-flash-lite لا يدعم التفكير أصلًا
           },
           safetySettings: [
             { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
