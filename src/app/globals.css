@@ -1,26 +1,235 @@
 @import "tailwindcss";
 
+/* ===== Dana Telecom — Brand Design System (Premium) =====
+   Brand colors:  Yellow #FFF200  |  Navy #282369
+   Language: Arabic (RTL) — style: cutting-edge, cinematic, trustworthy
+========================================================== */
+
+@theme {
+  /* Navy (primary) */
+  --color-navy: #282369;
+  --color-navy-dark: #141036;
+  --color-navy-light: #3b3596;
+  --color-navy-soft: #ecebf5;
+
+  /* Yellow (accent / CTA) */
+  --color-brand: #fff200;
+  --color-brand-dark: #e6d900;
+  --color-brand-soft: #fffce0;
+
+  /* Neutrals */
+  --color-ink: #17172a;
+  --color-muted: #5c5c72;
+  --color-surface: #f6f7fb;
+  --color-line: #e6e7ef;
+
+  /* Typography */
+  --font-sans: var(--font-cairo), system-ui, sans-serif;
+
+  /* Radii & shadow */
+  --radius-xl: 1.25rem;
+  --shadow-card: 0 10px 30px -12px rgba(40, 35, 105, 0.18);
+  --shadow-soft: 0 4px 16px -6px rgba(40, 35, 105, 0.12);
+  --shadow-glow: 0 0 60px -12px rgba(255, 242, 0, 0.45);
+}
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #17172a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Accessible focus states (WCAG) */
+:focus-visible {
+  outline: 3px solid var(--color-navy-light);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: var(--color-navy-dark);
+}
+
+/* ===== Cinematic / Aurora backgrounds ===== */
+.bg-navy-gradient {
+  background: linear-gradient(135deg, #282369 0%, #141036 55%, #2f2a7a 100%);
+}
+
+.bg-aurora {
+  background:
+    radial-gradient(60% 60% at 15% 20%, rgba(255, 242, 0, 0.18) 0%, transparent 60%),
+    radial-gradient(50% 50% at 85% 15%, rgba(90, 80, 220, 0.55) 0%, transparent 60%),
+    radial-gradient(55% 55% at 80% 90%, rgba(255, 242, 0, 0.12) 0%, transparent 55%),
+    linear-gradient(135deg, #1c1748 0%, #141036 50%, #221c5e 100%);
+}
+
+/* animated aurora blob */
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+.animate-blob {
+  animation: blob-float 14s ease-in-out infinite;
+}
+
+/* gradient text */
+.text-gradient {
+  background: linear-gradient(120deg, #fff200 0%, #fff7a0 40%, #fff200 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* animated gradient sheen for text */
+@keyframes sheen {
+  to { background-position: 200% center; }
+}
+.text-shimmer {
+  background: linear-gradient(100deg, #fff 30%, #fff200 50%, #fff 70%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sheen 4s linear infinite;
+}
+
+/* dotted / grid pattern overlay */
+.bg-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.glass-light {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* shine sweep on hover (buttons/cards) */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.shine:hover::after {
+  transform: translateX(120%);
+}
+
+/* marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* حلقات نابضة (بطاقة الدعم ٢٤/٧) */
+@keyframes ring-pulse {
+  0% { transform: scale(0.55); opacity: 0.65; }
+  80% { opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.animate-ring {
+  animation: ring-pulse 3.2s ease-out infinite;
+}
+
+/* دوران بطيء للحلقة المتقطعة */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+/* أشرطة إشارة متحركة */
+@keyframes bar-rise {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+.animate-bar {
+  transform-origin: bottom;
+  animation: bar-rise 1.6s ease-in-out infinite;
+}
+
+/* نقوش قطرية */
+.bg-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.14) 0px,
+    rgba(255, 255, 255, 0.14) 2px,
+    transparent 2px,
+    transparent 12px
+  );
+}
+.bg-stripes-dark {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(40, 35, 105, 0.14) 0px,
+    rgba(40, 35, 105, 0.14) 2px,
+    transparent 2px,
+    transparent 12px
+  );
+}
+
+/* subtle float */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+
+/* fade-up (fallback, non-JS) */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-blob,
+  .animate-marquee,
+  .animate-floaty,
+  .animate-ring,
+  .animate-spin-slow,
+  .animate-bar,
+  .text-shimmer,
+  .animate-fade-up {
+    animation: none !important;
+  }
+  .shine::after { display: none; }
 }
