@@ -59,6 +59,9 @@ export default function ChatWidget() {
       const data = await res.json();
       if (!res.ok) {
         setErr(data?.error || "تعذّر الحصول على رد.");
+        if (process.env.NODE_ENV !== "production" && data?.reason) {
+          console.warn("[chat] سبب الخطأ:", data.reason);
+        }
       } else {
         setMsgs((m) => [...m, { role: "model", text: data.reply }]);
       }

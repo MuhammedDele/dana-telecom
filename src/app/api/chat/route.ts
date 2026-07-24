@@ -26,6 +26,22 @@ function rateLimited(ip: string) {
 
 type Msg = { role: "user" | "model"; text: string };
 
+/**
+ * تشخيص آمن: يؤكد فقط أن متغيّر البيئة موجود على الخادم.
+ * لا يكشف المفتاح ولا أي جزء منه — الطول فقط للتأكد من عدم وجود مسافات/علامات اقتباس.
+ * افتح /api/chat في المتصفح بعد النشر على Netlify للتحقق.
+ */
+export async function GET() {
+  const k = process.env.GEMINI_API_KEY;
+  return NextResponse.json({
+    configured: Boolean(k),
+    keyLength: k ? k.length : 0,
+    hasWhitespace: k ? /\s/.test(k) : false,
+    hasQuotes: k ? /^["']|["']$/.test(k) : false,
+    model: MODEL,
+  });
+}
+
 export async function POST(req: Request) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) {
@@ -109,8 +125,32 @@ export async function POST(req: Request) {
     if (!res.ok) {
       const detail = await res.text();
       console.error("Gemini error", res.status, detail.slice(0, 400));
+
+      // رسائل مميّزة لكل سبب — حتى لا يضيع الوقت في تشخيص خاطئ
+      if (res.status === 429) {
+        return NextResponse.json(
+          {
+            error:
+              "تجاوزنا الحد المسموح من الأسئلة حاليًا. يرجى المحاولة لاحقًا أو التواصل معنا مباشرة.",
+            reason: "quota_exceeded",
+          },
+          { status: 429 },
+        );
+      }
+      if (res.status === 401 || res.status === 403) {
+        return NextResponse.json(
+          {
+            error: "المساعد غير مُهيّأ بشكل صحيح. يرجى التواصل معنا مباشرة.",
+            reason: "invalid_api_key",
+          },
+          { status: 503 },
+        );
+      }
       return NextResponse.json(
-        { error: "تعذّر الحصول على رد الآن. يرجى المحاولة بعد قليل أو التواصل معنا هاتفيًا." },
+        {
+          error: "تعذّر الحصول على رد الآن. يرجى المحاولة بعد قليل أو التواصل معنا هاتفيًا.",
+          reason: `upstream_${res.status}`,
+        },
         { status: 502 },
       );
     }
