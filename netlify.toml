@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# إضافة Next.js الرسمية — تفعّل مسارات الـAPI (مثل /api/chat) على Netlify
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# ⚠️ لا تضع GEMINI_API_KEY هنا إطلاقًا — هذا الملف يُرفع إلى Git.
+# ضعه من لوحة Netlify:
+#   Site configuration → Environment variables → Add a variable
+#   Key:   GEMINI_API_KEY
+#   Value: مفتاحك
+#   Scopes: Functions (مطلوب) — لا حاجة لـ Builds

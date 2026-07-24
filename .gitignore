@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# معاينات صفحات الهوت سبوت — محلية فقط، يجب ألا تُنشر على الموقع
+public/*-preview*.html

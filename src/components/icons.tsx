@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   BadgeCheck,
+  Bot,
   Building2,
   Cctv,
   Check,
@@ -66,6 +67,7 @@ export const iconRegistry = {
   arrow: ArrowLeft,
   // الدفع والتصميم
   qr: QrCode,
+  bot: Bot,
   card: CreditCard,
   mobile: Smartphone,
   verified: BadgeCheck,
