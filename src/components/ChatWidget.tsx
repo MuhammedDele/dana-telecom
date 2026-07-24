@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
-import { Icon } from "./icons";
 import { site } from "@/lib/site";
 
 type Msg = { role: "user" | "model"; text: string };
@@ -81,7 +81,7 @@ const SUGGESTIONS = [
 ];
 
 const GREETING =
-  "أهلًا بك في دانا تيليكوم 👋\nكيف أقدر أساعدك؟ اسألني عن الباقات، التغطية، كاميرات المراقبة، أو طريقة الاشتراك.";
+  "أهلًا بك، أنا مروان من دانا تيليكوم.\nكيف أقدر أساعدك؟ اسألني عن الباقات، التغطية، كاميرات المراقبة، أو طريقة الاشتراك.";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -145,9 +145,11 @@ export default function ChatWidget() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "إغلاق المساعد" : "افتح مساعد دانا تيليكوم"}
+        aria-label={open ? "إغلاق المحادثة" : "تحدّث مع مروان — مساعد آلي"}
         aria-expanded={open}
-        className="fixed bottom-5 right-5 z-50 flex size-14 items-center justify-center rounded-full bg-navy text-brand shadow-card transition-transform hover:-translate-y-1 focus-visible:outline-none"
+        className={`fixed bottom-5 right-5 z-50 flex items-center rounded-full bg-navy text-white shadow-card transition-transform hover:-translate-y-1 focus-visible:outline-none ${
+          open ? "size-14 justify-center" : "gap-2.5 p-1.5 pe-4 sm:pe-5"
+        }`}
       >
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
@@ -155,10 +157,22 @@ export default function ChatWidget() {
           </svg>
         ) : (
           <>
-            <Icon name="bot" size={27} strokeWidth={1.9} />
-            <span className="absolute -top-0.5 -end-0.5 flex size-3.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-              <span className="relative inline-flex size-3.5 rounded-full bg-brand" />
+            <span className="relative">
+              <Image
+                src="/marwan.jpg"
+                alt=""
+                width={256}
+                height={256}
+                className="size-11 rounded-full object-cover ring-2 ring-brand"
+              />
+              <span className="absolute -bottom-0.5 -end-0.5 flex size-3.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex size-3.5 rounded-full border-2 border-navy bg-green-400" />
+              </span>
+            </span>
+            <span className="text-start leading-tight">
+              <span className="block text-sm font-extrabold">تحدّث مع مروان</span>
+              <span className="block text-[10px] text-white/60">مساعد آلي</span>
             </span>
           </>
         )}
@@ -180,14 +194,20 @@ export default function ChatWidget() {
             <div className="relative overflow-hidden bg-navy-gradient px-5 py-4 text-white">
               <div className="absolute inset-0 bg-grid opacity-20" aria-hidden />
               <div className="relative flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-xl bg-brand text-navy-dark">
-                  <Icon name="bot" size={21} strokeWidth={2} />
+                <span className="relative shrink-0">
+                  <Image
+                    src="/marwan.jpg"
+                    alt="مروان"
+                    width={256}
+                    height={256}
+                    className="size-11 rounded-full object-cover ring-2 ring-brand"
+                  />
+                  <span className="absolute -bottom-0.5 -end-0.5 size-3 rounded-full border-2 border-navy bg-green-400" />
                 </span>
                 <div>
-                  <p className="text-sm font-extrabold">مساعد دانا تيليكوم</p>
-                  <p className="flex items-center gap-1.5 text-[11px] text-white/70">
-                    <span className="size-1.5 rounded-full bg-green-400" />
-                    يجيب عن أسئلة خدماتنا
+                  <p className="text-sm font-extrabold">مروان</p>
+                  <p className="text-[11px] text-white/70">
+                    مساعد آلي من دانا تيليكوم
                   </p>
                 </div>
               </div>
@@ -279,7 +299,7 @@ export default function ChatWidget() {
             </form>
 
             <p className="border-t border-line bg-white px-4 pb-3 pt-2 text-center text-[10.5px] leading-relaxed text-muted">
-              مساعد آلي — للحالات الخاصة تواصل معنا على{" "}
+              مروان مساعد آلي وليس موظفًا — للحالات الخاصة تواصل معنا على{" "}
               <a href={site.contact.phoneHref} className="font-bold text-navy" dir="ltr">
                 {site.contact.phone}
               </a>
